@@ -57,18 +57,70 @@
         </div>
 
         <script>
-            function addGuitar(){
-                let serialNumber = document.getElementById("serialNumberTXT").value;
-                let price = document.getElementById("priceTXT").value;
-                let builder = document.getElementById("builderTXT").value;
-                let model = document.getElementById("modelTXT").value;
-                let type = document.getElementById("typeTXT").value;
-                let backwood = document.getElementById("backwoodTXT").value;
-                let topwood = document.getElementById("topwoodTXT").value;
+    async function addGuitar() {
+        let host = "http://localhost:8080";
+        let message = "";
+        let serialNumber = document.getElementById("serialNumberTXT").value;
+        let price = document.getElementById("priceTXT").value;
+        let builder = document.getElementById("builderTXT").value;
+        let model = document.getElementById("modelTXT").value;
+        let type = document.getElementById("typeTXT").value;
+        let backwood = document.getElementById("backwoodTXT").value;
+        let topwood = document.getElementById("topwoodTXT").value;
 
-                let guitar = {serialNumber: serialNumber, price: price, builder: builder, model: model, type: type, backwood: backwood, topwood: topwood};
-                alert("You entered: " + JSON.stringify(guitar));
-            }
+    if (serialNumber === "" || price === "" || builder === "" || model === "" || type === "" || backwood === "" || topwood === "") {
+        let stringAlert = "Please enter "
+        if (serialNumber === "") {
+            stringAlert += "Serial Number, ";
+        }
+        if (price === "") {
+            stringAlert += "Price, ";
+        }
+        if (builder === "") {
+            stringAlert += "Builder, ";
+        }
+        if (model === "") {
+            stringAlert += "Model, ";
+        }
+        if (type === "") {
+            stringAlert += "Type, ";
+        }
+        if (backwood === "") {
+            stringAlert += "Backwood, ";
+        }
+        if (topwood === "") {
+            stringAlert += "Topwood";
+        }
+        alert(stringAlert);
+    } else {
+
+        if (topwood.includes(" ")){
+            topwood = topwood.replace(/\s+/g, "_");
+        }
+        if (backwood.includes(" ")){
+            backwood = backwood.replace(/\s+/g, "_");
+        }
+
+        let guitar = { serialNumber: serialNumber, price: price, builder: builder.toUpperCase(), model: model, type: type.toUpperCase(), backWood: backwood.toUpperCase(), topWood: topwood.toUpperCase() };
+        console.log(guitar);
+        let request = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(guitar)
+        };
+        let respone = await fetch(host + "/inventory", request);
+        if (respone.status == 200){
+            message = "The guitar was added to the system";
+        } else {
+            console.log(respone);
+            message = "An error has occured, please contact the support team";
+        }
+        alert(message);
+    }
+}
+
         </script>
     </body>
 </html>

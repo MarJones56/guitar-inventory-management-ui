@@ -66,15 +66,28 @@
         </div>
 
         <script>
-            let guitars = [
-                {serialNumber: "1A", builder: "Martin", model: "D-18", type: "Acoustic", backwood: "Spruce", topwood: "Cedar", price: 1499.99},
-                {serialNumber: "2B", builder: "Fender", model: "A-67", type: "Electric", backwood: "Mahogany", topwood: "Pine", price: 999.99},
-                {serialNumber: "3C", builder: "Gibson", model: "B-32", type: "Acoustic", backwood: "Redwood", topwood: "Birch", price: 200.00},
-                {serialNumber: "4D", builder: "Martin", model: "High Power", type: "Electric", backwood: "Spruce", topwood: "Cedar", price: 1239.89},
-                {serialNumber: "5E", builder: "Taylor", model: "Z123", type: "Acoustic", backwood: "Birch", topwood: "Mahogany", price: 1365.25},
-            ];
+            let guitars = [];
+            let host = "http://localhost:8080/inventory"
 
-            function search(){
+            async function getAll(){
+                let request = {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+
+                let response = await fetch(host, request);
+                let result = await response.json();
+                return result;
+            }
+
+            async function search(){
+
+                if (guitars.length == 0){
+                    guitars = await getAll();
+                }
+                console.log(guitars);
                 let builder = document.getElementById("builderTXT").value;
                 let model = document.getElementById("modelTXT").value;
                 let type = document.getElementById("typeTXT").value;
@@ -112,8 +125,8 @@
                     cell2.appendChild(document.createTextNode(guitar.builder));
                     cell3.appendChild(document.createTextNode(guitar.model));
                     cell4.appendChild(document.createTextNode(guitar.type));
-                    cell5.appendChild(document.createTextNode(guitar.backwood));
-                    cell6.appendChild(document.createTextNode(guitar.topwood));
+                    cell5.appendChild(document.createTextNode(guitar.backWood));
+                    cell6.appendChild(document.createTextNode(guitar.topWood));
                     cell7.appendChild(document.createTextNode("$" + guitar.price));
                     row.appendChild(cell1);
                     row.appendChild(cell2);
