@@ -2,21 +2,19 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" href="navbar.css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Guitar Inventory Management</title>
     </head>
     <body>
-        <div class="Header">
-            <div class="HeaderHome">
-                <a href="index.html">Guitar Inventory Management</a>
-            </div>
-            <div class="HeaderNav">
-                <a href="about.html">About</a>
-                <a href="add.html">Add</a>
-                <a href="search.html">Search</a>
-            </div>
-        </div>
+        <ul class="topnav">
+            <li><a href="index.html">Home</a></li>
+            <li><a class="active" href="add.html">Add</a></li>        
+            <li><a href="search.html">Search</a></li>
+            <li><a href="about.html">About</a></li>
+            <li class="right"><a  href="login.html">Login</a></li>
+          </ul>
         <div class="AddContainer">
             <div class="TextContainer">
                 <label for="serialNumberTXT">Serial Number:</label>
@@ -56,9 +54,10 @@
             <button onclick=addGuitar()>Add Guitar</button>
         </div>
 
+        <script src="configuration.js"></script>
         <script>
     async function addGuitar() {
-        let host = "https://c322-spring2024-homework2-latest.onrender.com";
+        let host = getHost();
         let message = "";
         let serialNumber = document.getElementById("serialNumberTXT").value;
         let price = document.getElementById("priceTXT").value;
@@ -106,13 +105,18 @@
         let request = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${configuration.token()}`
             },
             body: JSON.stringify(guitar)
         };
         let respone = await fetch(host + "/inventory", request);
         if (respone.status == 200){
             message = "The guitar was added to the system";
+        } else if (respone.status == 401) {
+                    //logout();
+                    message = "Please login"
+                    location.href = "login.html";
         } else {
             console.log(respone);
             message = "An error has occured, please contact the support team";
